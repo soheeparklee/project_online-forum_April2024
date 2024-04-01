@@ -1,5 +1,7 @@
 package com.github.sc_project01_april2024_versoh.repository.post;
 
+import com.github.sc_project01_april2024_versoh.repository.comment.Comment;
+import com.github.sc_project01_april2024_versoh.repository.likes.Likes;
 import com.github.sc_project01_april2024_versoh.repository.user.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -34,7 +36,7 @@ public class Post {
     @Column(name= "content", nullable = false)
     private String content;
 
-    @Column(name= "like_count", nullable = false)
+    @Column(name= "like_count")
     private Integer likeCount;
 
     @Column(name= "create_at")
