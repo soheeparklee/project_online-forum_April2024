@@ -1,4 +1,4 @@
-package com.github.sc_project01_april2024_versoh.web.DTO;
+package com.github.sc_project01_april2024_versoh.web.DTO.auth;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -2,16 +2,13 @@ package com.github.sc_project01_april2024_versoh.web.controller;
 
 import com.github.sc_project01_april2024_versoh.config.security.JwtTokenProvider;
 import com.github.sc_project01_april2024_versoh.service.service.AuthService;
-import com.github.sc_project01_april2024_versoh.web.DTO.LoginRequest;
+import com.github.sc_project01_april2024_versoh.web.DTO.auth.LoginRequest;
 import com.github.sc_project01_april2024_versoh.web.DTO.ResponseDTO;
-import com.github.sc_project01_april2024_versoh.web.DTO.SignUpRequest;
+import com.github.sc_project01_april2024_versoh.web.DTO.auth.SignUpRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
