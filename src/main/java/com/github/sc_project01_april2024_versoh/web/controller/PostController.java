@@ -28,4 +28,32 @@ public class PostController {
     public ResponseDTO findAllPosts(Pageable pageable){
         return postService.findAllPosts(pageable);
     }
+
+    @Operation(summary = "게시글 상세 조회")
+    @GetMapping("/find/id/{postId}")
+    public ResponseDTO findPostById(@PathVariable Integer postId){
+        return postService.findPostById(postId);
+    }
+
+    @Operation(summary = "키워드로 게시글 조회")
+    @GetMapping("/find/keyword/{keyword}")
+    public ResponseDTO findPostByKeyword(@PathVariable String keyword){
+        return postService.findPostByKeyword(keyword);
+    }
+
+    @Operation(summary = "게시글 수정")
+    @PutMapping("/update/{postId}")
+    public ResponseDTO updatePost(@AuthenticationPrincipal CustomUserDetails customUserDetails,
+                                  @PathVariable Integer postId,
+                                  @RequestBody PostRequest postRequest){
+        return postService.updatePost(customUserDetails, postId, postRequest);
+    }
+
+    @Operation(summary = "좋아요 누르기")
+    @PostMapping("/likes/{postId}")
+    public ResponseDTO addLikes(@AuthenticationPrincipal CustomUserDetails customUserDetails,
+                                @PathVariable Integer postId){
+        return postService.addLikes(customUserDetails, postId);
+    }
+
 }

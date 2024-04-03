@@ -1,4 +1,4 @@
-package com.github.sc_project01_april2024_versoh.web;
+package com.github.sc_project01_april2024_versoh.web.advice;
 
 import com.github.sc_project01_april2024_versoh.service.exceptions.NotFoundException;
 import lombok.extern.slf4j.Slf4j;

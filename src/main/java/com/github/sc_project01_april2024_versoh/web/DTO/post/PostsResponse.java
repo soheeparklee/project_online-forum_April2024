@@ -1,5 +1,6 @@
-package com.github.sc_project01_april2024_versoh.web.DTO;
+package com.github.sc_project01_april2024_versoh.web.DTO.post;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,6 +17,8 @@ public class PostsResponse {
     private String title;
     private String name;
     private Integer likesCount;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy년 MM월 dd일 HH시 mm분")
     private LocalDateTime createdAt;
 
     public PostsResponse(Integer postId, String title, String name, Long likesCount, LocalDateTime createdAt) {
