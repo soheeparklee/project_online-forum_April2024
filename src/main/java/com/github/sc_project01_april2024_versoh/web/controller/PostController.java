@@ -49,6 +49,15 @@ public class PostController {
         return postService.updatePost(customUserDetails, postId, postRequest);
     }
 
+    @Operation(summary = "게시글 삭제")
+    @DeleteMapping("/delete/{postId}")
+    public ResponseDTO deletePost(@AuthenticationPrincipal CustomUserDetails customUserDetails,
+                                  @PathVariable Integer postId){
+        return postService.deletePost(customUserDetails, postId);
+    }
+
+
+
     @Operation(summary = "좋아요 누르기")
     @PostMapping("/likes/{postId}")
     public ResponseDTO addLikes(@AuthenticationPrincipal CustomUserDetails customUserDetails,

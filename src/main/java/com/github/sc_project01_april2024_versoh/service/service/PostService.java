@@ -127,6 +127,16 @@ public class PostService {
         return new ResponseDTO(HttpStatus.OK.value(), "Post updated successfully", postDetailResponse);
     }
 
+    public ResponseDTO deletePost(CustomUserDetails customUserDetails, Integer postId) {
+        User user= userJpa.findByEmailFetchJoin(customUserDetails.getEmail())
+                .orElseThrow(()-> new NotFoundException("이메일" + customUserDetails.getEmail() + "을 가진 유저를 찾지 못했습니다."));
+        Post post= postJpa.findById(postId)
+                .orElseThrow(()-> new NotFoundException("아이디 "+ postId +"에 해당하는 게시글이 없습니다."));
+
+        postJpa.delete(post);
+
+        return new ResponseDTO(HttpStatus.OK.value(), "Post deleted successfully");
+    }
 
     public ResponseDTO addLikes(CustomUserDetails customUserDetails, Integer postId) {
         User user= userJpa.findByEmailFetchJoin(customUserDetails.getEmail())

@@ -22,4 +22,6 @@ public class CommentController {
                                        @RequestBody CommentRequest commentRequest){
         return commentService.registerComment(customUserDetails, postId, commentRequest);
     }
+
+
 }
