@@ -30,4 +30,10 @@ public class CommentController {
                                      @RequestBody CommentRequest commentRequest){
         return commentService.updateComment(customUserDetails, commentId, commentRequest);
     }
+    @Operation(summary = "댓글 삭제")
+    @DeleteMapping ("/delete/{commentId}")
+    public ResponseDTO deleteComment(@AuthenticationPrincipal CustomUserDetails customUserDetails,
+                                     @PathVariable Integer commentId){
+        return commentService.deleteComment(customUserDetails, commentId);
+    }
 }
