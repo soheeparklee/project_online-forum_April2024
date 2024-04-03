@@ -23,5 +23,11 @@ public class CommentController {
         return commentService.registerComment(customUserDetails, postId, commentRequest);
     }
 
-
+    @Operation(summary = "댓글 수정")
+    @PutMapping("/update/{commentId}")
+    public ResponseDTO updateComment(@AuthenticationPrincipal CustomUserDetails customUserDetails,
+                                     @PathVariable Integer commentId,
+                                     @RequestBody CommentRequest commentRequest){
+        return commentService.updateComment(customUserDetails, commentId, commentRequest);
+    }
 }
