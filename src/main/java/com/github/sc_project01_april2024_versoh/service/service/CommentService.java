@@ -8,6 +8,7 @@ import com.github.sc_project01_april2024_versoh.repository.user.User;
 import com.github.sc_project01_april2024_versoh.repository.user.UserJpa;
 import com.github.sc_project01_april2024_versoh.repository.userDetails.CustomUserDetails;
 import com.github.sc_project01_april2024_versoh.service.exceptions.NotFoundException;
+import com.github.sc_project01_april2024_versoh.web.DTO.comment.CommentDto;
 import com.github.sc_project01_april2024_versoh.web.DTO.comment.CommentRequest;
 import com.github.sc_project01_april2024_versoh.web.DTO.ResponseDTO;
 import com.github.sc_project01_april2024_versoh.web.DTO.post.PostDetailResponse;
@@ -16,6 +17,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -55,16 +58,28 @@ public class CommentService {
 
         Post post= postJpa.findById(comment.getPost().getPostId())
                 .orElseThrow(()-> new NotFoundException("해당 아이디를 가진 게시글을 찾지 못했습니다."));
+        List<Comment> comments= commentJpa.findByPost(post);
+        List<CommentDto> commentDtoList= comments
+                .stream()
+                .map(c-> new CommentDto(
+                        c.getCommentId(),
+                        c.getPost().getPostId(),
+                        c.getName(),
+                        c.getContent(),
+                        c.getCreatedAt()))
+                .toList();
 
-        PostDetailResponse postDetailResponse= new PostDetailResponse(
-                post.getPostId(),
-                post.getTitle(),
-                post.getName(),
-                post.getContent(),
-                post.getCreatedAt(),
-                post.getCommentList());
-)
 
-        return
+        PostDetailResponse postDetailResponse= PostDetailResponse
+                .builder()
+                .postId(post.getPostId())
+                .title(post.getTitle())
+                .name(post.getName())
+                .content(post.getContent())
+                .createdAt(post.getCreatedAt())
+                .commentDtoList(commentDtoList)
+                .build();
+
+        return new ResponseDTO(HttpStatus.OK.value(), "Comment update successful", postDetailResponse);
     }
 }
