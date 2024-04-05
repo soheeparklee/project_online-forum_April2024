@@ -21,11 +21,11 @@ public class UserController {
         return userService.findMyPage(customUserDetails);
     }
 
-//    @Operation(summary = "Role 바꾸기")
-//    @PutMapping("/change-role")
-//    public ResponseDTO changeUserRole(@AuthenticationPrincipal CustomUserDetails customUserDetails){
-//        return userService.changeUserRole(customUserDetails);
-//    }
+    @Operation(summary = "Role 바꾸기")
+    @PutMapping("/change-role")
+    public ResponseDTO changeUserRole(@AuthenticationPrincipal CustomUserDetails customUserDetails){
+        return userService.changeUserRole(customUserDetails);
+    }
 
 
 

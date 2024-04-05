@@ -86,47 +86,32 @@ public class UserService {
 
     }
 
-//    public ResponseDTO changeUserRole(CustomUserDetails customUserDetails) {
-//        User user= userJpa.findByEmailFetchJoin(customUserDetails.getEmail())
-//                .orElseThrow(()-> new NotFoundException("이메일" + customUserDetails.getEmail() + "을 가진 유저를 찾지 못했습니다."));
-//
-//        List<UserRole> userRoles= user.getUserRole();
-//        UserRole userRole= userRoles.get(0);
-//        Role role= userRole.getRole();
-//        String oldRoleName= role.getName();
-//
-//        userRoleJpa.delete(userRole);
-//
-//        Role newRole;
-//        if(oldRoleName.equals("ROLE_USER")){
-//            newRole= roleJpa.findByName("ROLE_ADMIN");
-//            UserRole newUserRole = UserRole.builder()
-//                    .user(user)
-//                    .role(newRole)
-//                    .build();
-//            userRoleJpa.save(newUserRole);
-//        }else if(oldRoleName.equals("ROLE_ADMIN")){
-//            newRole= roleJpa.findByName("ROLE_USER");
-//            UserRole newUserRole = UserRole.builder()
-//                    .user(user)
-//                    .role(newRole)
-//                    .build();
-//            userRoleJpa.save(newUserRole);
-//        }
-//
-//        user.setUserRole(Collections.emptyList());
-//
-//
-//        userJpa.save(user);
-//
-//        UserResponse userResponse = UserResponse.builder()
-//                .userId(user.getUserId())
-//                .email(user.getEmail())
-//                .name(user.getName())
-//                .phoneNumber(user.getPhoneNumber())
-//                .userRole(user.getUserRole())
-//                .build();
-//
-//        return new ResponseDTO(HttpStatus.OK.value(), "User role change success", userResponse);
-//    }
+    public ResponseDTO changeUserRole(CustomUserDetails customUserDetails) {
+        User user= userJpa.findByEmailFetchJoin(customUserDetails.getEmail())
+                .orElseThrow(()-> new NotFoundException("이메일" + customUserDetails.getEmail() + "을 가진 유저를 찾지 못했습니다."));
+
+        List<UserRole> userRoleList= userRoleJpa.findByUser(user);
+        UserRole userRole= userRoleList.get(0);
+        Role role= userRole.getRole();
+        String roleName= role.getName();
+
+        userRoleJpa.delete(userRole);
+
+        Role newRole= roleJpa.findByName(roleName.equals("ROLE_USER") ?  "ROLE_ADMIN": "ROLE_USER");
+
+        userRole.setRole(newRole);
+        userRoleJpa.save(userRole);
+
+
+
+        UserResponse userResponse = UserResponse.builder()
+                .userId(user.getUserId())
+                .email(user.getEmail())
+                .name(user.getName())
+                .phoneNumber(user.getPhoneNumber())
+                .userRole(user.getUserRole())
+                .build();
+
+        return new ResponseDTO(HttpStatus.OK.value(), "User role change success", userResponse);
+    }
 }
