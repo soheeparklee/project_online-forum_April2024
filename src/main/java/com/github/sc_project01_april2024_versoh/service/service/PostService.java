@@ -8,6 +8,7 @@ import com.github.sc_project01_april2024_versoh.repository.user.User;
 import com.github.sc_project01_april2024_versoh.repository.user.UserJpa;
 import com.github.sc_project01_april2024_versoh.repository.userDetails.CustomUserDetails;
 import com.github.sc_project01_april2024_versoh.service.exceptions.NotFoundException;
+import com.github.sc_project01_april2024_versoh.service.exceptions.NotSameUserException;
 import com.github.sc_project01_april2024_versoh.web.DTO.post.PostDetailResponse;
 import com.github.sc_project01_april2024_versoh.web.DTO.comment.CommentDto;
 import com.github.sc_project01_april2024_versoh.web.DTO.post.PostRequest;
@@ -114,17 +115,23 @@ public class PostService {
         Post post= postJpa.findById(postId)
                 .orElseThrow(()-> new NotFoundException("아이디 "+ postId +"에 해당하는 게시글이 없습니다."));
 
-        post.setTitle(postRequest.getTitle());
-        post.setContent(postRequest.getContent());
-        Post updatePost= postJpa.save(post);
+        String nameUser= user.getName();
+        String namePost= post.getName();
+        if(nameUser.equals(namePost)){
+            post.setTitle(postRequest.getTitle());
+            post.setContent(postRequest.getContent());
+            Post updatePost = postJpa.save(post);
 
-        PostDetailResponse postDetailResponse= new PostDetailResponse(
-                updatePost.getPostId(),
-                updatePost.getTitle(),
-                updatePost.getName(),
-                updatePost.getContent());
+            PostDetailResponse postDetailResponse = new PostDetailResponse(
+                    updatePost.getPostId(),
+                    updatePost.getTitle(),
+                    updatePost.getName(),
+                    updatePost.getContent());
 
-        return new ResponseDTO(HttpStatus.OK.value(), "Post updated successfully", postDetailResponse);
+            return new ResponseDTO(HttpStatus.OK.value(), "Post updated successfully", postDetailResponse);
+        } else{
+            throw new NotSameUserException("Post update fail. 작성자가 아닙니다.");
+        }
     }
 
     public ResponseDTO deletePost(CustomUserDetails customUserDetails, Integer postId) {
@@ -132,10 +139,16 @@ public class PostService {
                 .orElseThrow(()-> new NotFoundException("이메일" + customUserDetails.getEmail() + "을 가진 유저를 찾지 못했습니다."));
         Post post= postJpa.findById(postId)
                 .orElseThrow(()-> new NotFoundException("아이디 "+ postId +"에 해당하는 게시글이 없습니다."));
+        String nameUser= user.getName();
+        String namePost= post.getName();
+        if(nameUser.equals(namePost)) {
+            postJpa.delete(post);
 
-        postJpa.delete(post);
+            return new ResponseDTO(HttpStatus.OK.value(), "Post deleted successfully");
+        } else{
+            throw new NotSameUserException("Post delete fail. 작성자가 아닙니다.");
+        }
 
-        return new ResponseDTO(HttpStatus.OK.value(), "Post deleted successfully");
     }
 
     public ResponseDTO addLikes(CustomUserDetails customUserDetails, Integer postId) {
