@@ -30,10 +30,10 @@ public class CommentService {
 
     public ResponseDTO registerComment(CustomUserDetails customUserDetails, Integer postId, CommentRequest commentRequest) {
 
-        User user= userJpa.findByEmailFetchJoin(customUserDetails.getEmail())
-                .orElseThrow(()-> new NotFoundException("이메일" + customUserDetails.getEmail() + "을 가진 유저를 찾지 못했습니다."));
-        Post post= postJpa.findById(postId)
-                .orElseThrow(()-> new NotFoundException("해당 아이디"+ postId + "를 가진 게시글을 찾지 못했습니다."));
+        User user = userJpa.findByEmailFetchJoin(customUserDetails.getEmail())
+                .orElseThrow(() -> new NotFoundException("이메일" + customUserDetails.getEmail() + "을 가진 유저를 찾지 못했습니다."));
+        Post post = postJpa.findById(postId)
+                .orElseThrow(() -> new NotFoundException("해당 아이디" + postId + "를 가진 게시글을 찾지 못했습니다."));
         Comment comment = Comment.builder()
                 .user(user)
                 .post(post)
@@ -47,13 +47,13 @@ public class CommentService {
     }
 
     public ResponseDTO updateComment(CustomUserDetails customUserDetails, Integer commentId, CommentRequest commentRequest) {
-        User user= userJpa.findByEmailFetchJoin(customUserDetails.getEmail())
-                .orElseThrow(()-> new NotFoundException("이메일" + customUserDetails.getEmail() + "을 가진 유저를 찾지 못했습니다."));
-        Comment comment= commentJpa.findById(commentId)
-                .orElseThrow(()-> new NotFoundException("해당 아이디"+ commentId + "를 가진 댓글을 찾지 못했습니다."));
-        String nameUser= user.getName();
-        String nameComment= comment.getName();
-        if(nameUser.equals(nameComment)) {
+        User user = userJpa.findByEmailFetchJoin(customUserDetails.getEmail())
+                .orElseThrow(() -> new NotFoundException("이메일" + customUserDetails.getEmail() + "을 가진 유저를 찾지 못했습니다."));
+        Comment comment = commentJpa.findById(commentId)
+                .orElseThrow(() -> new NotFoundException("해당 아이디" + commentId + "를 가진 댓글을 찾지 못했습니다."));
+        String nameUser = user.getName();
+        String nameComment = comment.getName();
+        if (nameUser.equals(nameComment)) {
             comment.setContent(commentRequest.getContent());
             commentJpa.save(comment);
 
@@ -89,26 +89,26 @@ public class CommentService {
     }
 
     public ResponseDTO deleteComment(CustomUserDetails customUserDetails, Integer commentId) {
-        User user= userJpa.findByEmailFetchJoin(customUserDetails.getEmail())
-                .orElseThrow(()-> new NotFoundException("이메일" + customUserDetails.getEmail() + "을 가진 유저를 찾지 못했습니다."));
-        Comment comment= commentJpa.findById(commentId)
-                .orElseThrow(()-> new NotFoundException("해당 아이디"+ commentId + "를 가진 댓글을 찾지 못했습니다."));
+        User user = userJpa.findByEmailFetchJoin(customUserDetails.getEmail())
+                .orElseThrow(() -> new NotFoundException("이메일" + customUserDetails.getEmail() + "을 가진 유저를 찾지 못했습니다."));
+        Comment comment = commentJpa.findById(commentId)
+                .orElseThrow(() -> new NotFoundException("해당 아이디" + commentId + "를 가진 댓글을 찾지 못했습니다."));
 
-        String nameUser= user.getName();
-        String nameComment= comment.getName();
-        if(nameUser.equals(nameComment)) {
+        String nameUser = user.getName();
+        String nameComment = comment.getName();
+        if (nameUser.equals(nameComment)) {
             commentJpa.delete(comment);
             return new ResponseDTO(HttpStatus.OK.value(), "Comment delete successful");
-        }else{
+        } else {
             throw new NotSameUserException("Comment delete fail. Comment를 작성한 작성자가 아닙니다.");
         }
 
     }
 
     public ResponseDTO findCommentByQuery(Integer commentId) {
-        Comment comment= commentJpa.findById(commentId)
-                .orElseThrow(()-> new NotFoundException("해당 아이디"+ commentId + "를 가진 댓글을 찾지 못했습니다."));
-        CommentDto commentDto= CommentDto.builder()
+        Comment comment = commentJpa.findById(commentId)
+                .orElseThrow(() -> new NotFoundException("해당 아이디" + commentId + "를 가진 댓글을 찾지 못했습니다."));
+        CommentDto commentDto = CommentDto.builder()
                 .commentId(commentId)
                 .postId(comment.getPost().getPostId())
                 .name(comment.getName())
@@ -116,5 +116,19 @@ public class CommentService {
                 .createdAt(comment.getCreatedAt())
                 .build();
         return new ResponseDTO(HttpStatus.OK.value(), "Comment found", commentDto);
+    }
+
+    public ResponseDTO findCommentsByQuery(List<Integer> commentIds) {
+        List<Comment> comments = commentJpa.findAllById(commentIds);
+        List<CommentDto> commentDtoList = comments
+                .stream()
+                .map(c -> new CommentDto(
+                        c.getCommentId(),
+                        c.getPost().getPostId(),
+                        c.getName(),
+                        c.getContent(),
+                        c.getCreatedAt()
+                )).collect(Collectors.toList());
+        return new ResponseDTO(HttpStatus.OK.value(), "Comments found", commentDtoList);
     }
 }
