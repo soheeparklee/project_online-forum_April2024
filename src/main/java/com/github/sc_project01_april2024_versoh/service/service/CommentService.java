@@ -14,6 +14,7 @@ import com.github.sc_project01_april2024_versoh.web.DTO.comment.CommentRequest;
 import com.github.sc_project01_april2024_versoh.web.DTO.ResponseDTO;
 import com.github.sc_project01_april2024_versoh.web.DTO.post.PostDetailResponse;
 import lombok.RequiredArgsConstructor;
+import org.checkerframework.checker.units.qual.C;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -130,5 +131,37 @@ public class CommentService {
                         c.getCreatedAt()
                 )).collect(Collectors.toList());
         return new ResponseDTO(HttpStatus.OK.value(), "Comments found", commentDtoList);
+    }
+
+    public ResponseDTO deleteCommentsByQuery( CustomUserDetails customUserDetails, List<Integer> commentIds) {
+        User user = userJpa.findByEmailFetchJoin(customUserDetails.getEmail())
+                .orElseThrow(() -> new NotFoundException("이메일" + customUserDetails.getEmail() + "을 가진 유저를 찾지 못했습니다."));
+
+        List<Comment> comments = commentJpa.findAllById(commentIds);
+
+        Boolean thereIsPublisherInComments= comments
+                .stream()
+                .map(Comment::getUser)
+                .anyMatch(cu -> cu.equals(user));
+
+        if(thereIsPublisherInComments) {
+            List<Comment> commentsToDelete = comments.stream()
+                    .filter(c -> c.getUser().equals(user))
+                    .collect(Collectors.toList());
+
+            List<Integer> commentIdsToDelete = commentsToDelete.stream()
+                    .map(Comment::getCommentId)
+                    .collect(Collectors.toList());
+
+
+            commentJpa.deleteAll(commentsToDelete);
+            return new ResponseDTO(HttpStatus.OK.value(), "Comments with Id"+ commentIdsToDelete+ "deleted") ;
+        }
+        else{
+            throw new NotSameUserException("Comments delete fail. " + user.getName() + "님이 작성한 댓글이 없습니다");
+        }
+
+
+
     }
 }

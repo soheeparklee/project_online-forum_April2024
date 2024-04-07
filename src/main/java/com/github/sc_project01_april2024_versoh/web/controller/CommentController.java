@@ -41,15 +41,22 @@ public class CommentController {
 
     //path query
     @Operation(summary = "댓글 path query 찾기")
-    @GetMapping ("/find") //localhost:8080/comment/find?id=10
+    @GetMapping ("/find") //http://localhost:8080/comment/find?id=10
     public ResponseDTO findCommentByQuery(@RequestParam("id") Integer commentId){
         return commentService.findCommentByQuery(commentId);
     }
 
     //many path query
     @Operation(summary = "댓글 path query 여러개 찾기")
-    @GetMapping ("/findAll") //localhost:8080/comment/find?id=10&id=6&id=11
+    @GetMapping ("/findAll") //http://localhost:8080/comment/find?id=10&id=6&id=11
     public ResponseDTO findCommentsByQuery(@RequestParam("id") List<Integer> commentIds){
         return commentService.findCommentsByQuery(commentIds);
+    }
+
+    @Operation(summary = "내가 작성한 댓글일때만 삭제 가능")
+    @DeleteMapping ("/deleteAll") //http://localhost:8080/comment/find?id=10&id=6&id=11
+    public ResponseDTO deleteCommentsByQuery(@AuthenticationPrincipal CustomUserDetails customUserDetails,
+                                             @RequestParam("id") List<Integer> commentIds){
+        return commentService.deleteCommentsByQuery(customUserDetails, commentIds);
     }
 }

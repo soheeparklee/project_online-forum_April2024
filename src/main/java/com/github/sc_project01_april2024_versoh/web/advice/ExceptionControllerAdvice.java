@@ -21,7 +21,7 @@ public class ExceptionControllerAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(NotSameUserException.class)
     public String handleSoldOutException(NotSameUserException nsu){
-        log.error("클라이언트 요청에 문제가 있습니다. Sold Out Exception: "+ nsu.getMessage());
+        log.error("클라이언트 요청에 문제가 있습니다. 작성자가 아니므로 함부로 update, delete할 수 없습니다: "+ nsu.getMessage());
         return nsu.getMessage();
     }
 }
