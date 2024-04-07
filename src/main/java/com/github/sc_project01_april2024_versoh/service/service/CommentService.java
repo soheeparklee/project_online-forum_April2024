@@ -104,4 +104,17 @@ public class CommentService {
         }
 
     }
+
+    public ResponseDTO findCommentByQuery(Integer commentId) {
+        Comment comment= commentJpa.findById(commentId)
+                .orElseThrow(()-> new NotFoundException("해당 아이디"+ commentId + "를 가진 댓글을 찾지 못했습니다."));
+        CommentDto commentDto= CommentDto.builder()
+                .commentId(commentId)
+                .postId(comment.getPost().getPostId())
+                .name(comment.getName())
+                .content(comment.getContent())
+                .createdAt(comment.getCreatedAt())
+                .build();
+        return new ResponseDTO(HttpStatus.OK.value(), "Comment found", commentDto);
+    }
 }

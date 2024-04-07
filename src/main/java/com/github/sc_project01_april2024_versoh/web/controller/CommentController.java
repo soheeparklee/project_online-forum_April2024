@@ -36,4 +36,11 @@ public class CommentController {
                                      @PathVariable Integer commentId){
         return commentService.deleteComment(customUserDetails, commentId);
     }
+
+    //path query
+    @Operation(summary = "댓글 path query 찾기")
+    @GetMapping ("/find") //localhost:8080/comment/find?id=10
+    public ResponseDTO findCommentByQuery(@RequestParam("id") Integer commentId){
+        return commentService.findCommentByQuery(commentId);
+    }
 }
